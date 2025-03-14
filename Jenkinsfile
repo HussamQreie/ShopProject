@@ -1,13 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:16' }
+    }
     environment {
-        // This should match the credentials ID in Jenkins
         SONAR_TOKEN = credentials('sonar-token-id')
     }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the correct subfolder
                 checkout scm
             }
         }
@@ -23,7 +23,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonarQubeServer') { // Name as configured in Jenkins
+                withSonarQubeEnv('MySonarQubeServer') {
                     sh 'sonar-scanner'
                 }
             }
@@ -37,7 +37,6 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                // Adjust deployment as needed; for example, using Docker to run your container on port 3000:
                 sh 'docker run -d -p 3000:3000 my-web-app-image'
             }
         }
