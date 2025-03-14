@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'node:16' }
-    }
+    agent any
     environment {
         SONAR_TOKEN = credentials('sonar-token-id')
     }
@@ -12,16 +10,25 @@ pipeline {
             }
         }
         stage('Install Dependencies') {
+            agent {
+                docker { image 'node:16' }
+            }
             steps {
                 sh 'npm install'
             }
         }
         stage('Run Tests') {
+            agent {
+                docker { image 'node:16' }
+            }
             steps {
                 sh 'npm test'
             }
         }
         stage('SonarQube Analysis') {
+            agent {
+                docker { image 'node:16' }
+            }
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
                     sh 'sonar-scanner'
