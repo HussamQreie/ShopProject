@@ -22,7 +22,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
-                    sh 'sonar-scanner'
+                    // Ensure the sonar-scanner command runs in the directory containing sonar-project.properties
+                    dir('ShopProject-main') {
+                        sh 'sonar-scanner'
+                    }
                 }
             }
         }
