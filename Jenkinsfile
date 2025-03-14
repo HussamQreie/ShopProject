@@ -32,8 +32,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 dir('ShopProject-main') {
-                    // Replace with actual test command if you have tests set up
-                    // Example: sh 'npm test'
+                    // TODO: Replace with actual test command (e.g., sh 'npm test')
                     echo 'Running tests (to be implemented)'
                 }
             }
@@ -44,7 +43,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
                     dir('ShopProject-main') {
-                        // Replace with actual SonarQube scanner command
+                        // TODO: Replace with sonar-scanner command
                         // Example: sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
                         echo 'Performing SonarQube analysis (to be implemented)'
                     }
@@ -54,7 +53,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 dir('ShopProject-main') {
-                    // Add Quality Gate check logic here
+                    // TODO: Add Quality Gate check logic
                     // Example: waitForQualityGate()
                     echo 'Checking Quality Gate (to be implemented)'
                 }
@@ -64,8 +63,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 dir('ShopProject-main') {
-                    // Add deployment commands here
-                    // Example: sh 'npm start' or deploy to a server
+                    // TODO: Replace with actual deployment command (e.g., sh 'npm start')
                     echo 'Deploying application (to be implemented)'
                 }
             }
