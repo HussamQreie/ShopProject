@@ -16,38 +16,51 @@ pipeline {
         }
         stage('Verify Files') {
             steps {
-                sh 'ls -la' // Lists all files to confirm package.json is present
+                sh 'ls -la' // Lists files in the workspace root
+                dir('ShopProject-main') {
+                    sh 'ls -la' // Lists files inside the ShopProject-main directory
+                }
             }
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install' // Installs Node.js dependencies
+                dir('ShopProject-main') {
+                    sh 'npm install' // Runs npm install inside the repository directory
+                }
             }
         }
         stage('Run Tests') {
             steps {
-                // Add test commands here (e.g., sh 'npm test')
-                echo 'Running tests (to be implemented)'
+                dir('ShopProject-main') {
+                    // Add test commands here (e.g., sh 'npm test')
+                    echo 'Running tests (to be implemented)'
+                }
             }
         }
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    // Add SonarQube analysis commands here (e.g., sh 'sonar-scanner')
-                    echo 'Performing SonarQube analysis (to be implemented)'
+                    dir('ShopProject-main') {
+                        // Add SonarQube analysis commands here (e.g., sh 'sonar-scanner')
+                        echo 'Performing SonarQube analysis (to be implemented)'
+                    }
                 }
             }
         }
         stage('Quality Gate') {
             steps {
-                // Add Quality Gate check logic here
-                echo 'Checking Quality Gate (to be implemented)'
+                dir('ShopProject-main') {
+                    // Add Quality Gate check logic here
+                    echo 'Checking Quality Gate (to be implemented)'
+                }
             }
         }
         stage('Deploy') {
             steps {
-                // Add deployment commands here
-                echo 'Deploying application (to be implemented)'
+                dir('ShopProject-main') {
+                    // Add deployment commands here
+                    echo 'Deploying application (to be implemented)'
+                }
             }
         }
     }
