@@ -1,12 +1,17 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18-alpine' // Use an official Node.js image
+            args '-p 3000:3000' // Map ports if needed
+        }
+    }
     environment {
-        SONAR_TOKEN = credentials('sonar-token-id')
+        SONAR_TOKEN = credentials('sonar-token') // SonarQube token from Jenkins credentials
     }
     stages {
         stage('Checkout Code') {
             steps {
-                checkout scm
+                checkout scm // Single checkout step
             }
         }
         stage('Install Dependencies') {
@@ -16,30 +21,27 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                sh 'npm test' // Ensure tests exist in your project
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonarQubeServer') {
-                    // Ensure the sonar-scanner command runs in the directory containing sonar-project.properties
-                    dir('ShopProject-main') {
-                        sh 'sonar-scanner'
-                    }
+                withSonarQubeEnv('SonarQube') { // Configure SonarQube server in Jenkins
+                    sh 'npx sonar-scanner -Dsonar.projectKey=your-project-key'
                 }
             }
         }
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'MINUTES') {
+                timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker build -t my-web-app .'
-                sh 'docker run -d --network my-ci-cd-network -p 3000:3000 my-web-app'
+                sh 'npm run build' // Example build step
+                // Add deployment steps (e.g., deploy to server/S3)
             }
         }
     }
