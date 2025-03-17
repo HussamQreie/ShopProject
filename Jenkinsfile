@@ -38,7 +38,7 @@ pipeline {
             }
         }
         // Commenting out SonarQube stages until credentials are configured
-        /*
+        
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
@@ -59,7 +59,7 @@ pipeline {
                 }
             }
         }
-        */
+        
         stage('Deploy') {
             steps {
                 dir('ShopProject-main') {
