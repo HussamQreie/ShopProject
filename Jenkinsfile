@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SONARQUBE_URL = 'http://your-sonarqube-server'  // Update with your SonarQube server URL
+        SONARQUBE_URL = 'http://localhost:9000'  // Update with your SonarQube server URL
     }
     stages {
         stage('Checkout Code') {
