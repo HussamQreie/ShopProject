@@ -1,83 +1,61 @@
 pipeline {
     agent any
+
+    environment {
+        SONARQUBE_URL = 'http://localhost:9000'
+        SONARQUBE_TOKEN = credentials('sonarqube-token')
+    }
+
     stages {
-        stage('Cleanup') {
-            steps {
-                cleanWs() // Cleans the workspace to remove any residual files
-            }
-        }
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/HussamQreie/ShopProject.git',
-                    branch: 'main',
-                    changelog: true,
-                    poll: false
+                checkout scm
             }
         }
-        stage('Verify Files') {
-            steps {
-                sh 'ls -la' // Lists files in the workspace root
-                dir('ShopProject-main') {
-                    sh 'ls -la' // Lists files inside the ShopProject-main directory
-                }
-            }
-        }
+
         stage('Install Dependencies') {
             steps {
-                dir('ShopProject-main') {
-                    sh 'npm install' // Runs npm install inside the repository directory
-                }
+                sh 'npm install'
             }
         }
+
+        stage('Lint Code') {
+            steps {
+                sh 'npx eslint .'
+            }
+        }
+
         stage('Run Tests') {
             steps {
-                dir('ShopProject-main') {
-                    // TODO: Replace with actual test command (e.g., sh 'npm test')
-                    echo 'Running tests (to be implemented)'
+                sh 'npm test'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'npx sonar-scanner'
                 }
             }
         }
-        // Commenting out SonarQube stages until credentials are configured
-        
-        stage('SonarQube Analysis') {
+
+        stage('Quality Gate') {
             steps {
-                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    dir('ShopProject-main') {
-                        // TODO: Replace with sonar-scanner command
-                        // Example: sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
-                        echo 'Performing SonarQube analysis (to be implemented)'
+                script {
+                    timeout(time: 2, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
                     }
                 }
             }
         }
-        stage('Quality Gate') {
-            steps {
-                dir('ShopProject-main') {
-                    // TODO: Add Quality Gate check logic
-                    // Example: waitForQualityGate()
-                    echo 'Checking Quality Gate (to be implemented)'
-                }
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                dir('ShopProject-main') {
-                    // TODO: Replace with actual deployment command (e.g., sh 'npm start')
-                    echo 'Deploying application (to be implemented)'
-                }
-            }
-        }
     }
+
     post {
-        always {
-            echo 'Pipeline completed'
-        }
         success {
-            echo 'Build succeeded!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Build failed. Please check the logs.'
+            echo 'Pipeline failed!'
         }
     }
 }
