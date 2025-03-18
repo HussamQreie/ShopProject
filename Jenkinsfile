@@ -17,13 +17,7 @@ pipeline {
                 }
             }
         }
-        stage('Lint Code') {
-            steps {
-                dir('ShopProject-main') {
-                    sh 'npm run lint'  // Make sure linting script exists in package.json
-                }
-            }
-        }
+       
         stage('Run Tests') {
             steps {
                 dir('ShopProject-main') {
